@@ -755,6 +755,11 @@ class PutObjectTask(Task):
             used in the upload.
         """
         with fileobj as body:
+            original_size = os.stat(filename).st_size
+            metadata = copy.deepcopy(self.extra_args.get("Metadata", {}))
+            metadata.update({"Original-Size": str(original_size)})
+            self.extra_args["Metadata"] = metadata
+            
             client.put_object(Bucket=bucket, Key=key, Body=body, **extra_args)
 
 
